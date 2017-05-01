@@ -1,0 +1,43 @@
+﻿@model Mikro.Core.ViewModels.CommentFormViewModel
+@{
+    ViewBag.Title = "_DisplayingCommentsPartial";
+}
+
+@foreach (var comment in Model.Comments)
+{
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="panel-heading-one">
+                @comment.PostedOn.ToString("MMM d yyyy") | Added by <b>@comment.UserName</b>
+            </div>
+            <div class="panel-heading-two">               
+                @if (Model.CommentPlus.FirstOrDefault(x => x.CommentId == comment.Id) != null && Request.IsAuthenticated)
+                {
+                    <button type="submit" class="plus commentplus btn-success" comment-id="@comment.Id"><b>+@comment.PlusCounter</b></button>
+                }
+                else if(Request.IsAuthenticated)
+                {
+                    <button type="submit" class="plus commentplus btn-default" comment-id="@comment.Id"><b>@comment.PlusCounter</b></button>
+                }
+                @if (!Request.IsAuthenticated)
+                {
+                    <button type="submit" class="btn-success plus"><b>+@comment.PlusCounter</b></button>
+                }
+                @if (comment.UserId == @ViewBag.actualUserId)
+                {
+                    <a href="@Url.Action("EditComment", "Comment", new { id = comment.Id })">
+                        <span class="glyphicon glyphicon-edit"> </span>
+                    </a>
+                    <a href="@Url.Action("Delete", "Comment", new { id = comment.Id})">
+                        <span class="glyphicon glyphicon-remove" style="color:red"> </span>
+                    </a>
+                }               
+            </div>
+        </div>
+        <div class="panel-body">
+            @Html.Raw(comment.PostedContent.Replace(Environment.NewLine, "<br/>"))
+        </div>
+    </div>
+    
+}
+

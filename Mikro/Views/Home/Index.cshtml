@@ -1,0 +1,25 @@
+﻿@model Mikro.Core.ViewModels.HomeViewModel
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Nowe Wpisy</h2>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="form-group">
+        <form method="post" id="postForm" enctype="application/x-www-form-urlencoded">
+            <div>
+                <textarea class="form-control" id="Content" TextMode ="multiline" Name="Content" Rows="2"></textarea>
+            </div>
+            <div>
+                <button type="submit" id="addPost" class="btn btn-primary">Wyslij</button>
+            </div>
+        </form>
+    </div>
+}
+
+@Html.Partial("~/Views/Shared/_DisplayPostsPartial.cshtml")
+
+
+
+
+    

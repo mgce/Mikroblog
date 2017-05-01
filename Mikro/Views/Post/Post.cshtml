@@ -1,0 +1,67 @@
+﻿@model Mikro.Core.ViewModels.CommentFormViewModel
+@{
+    ViewBag.Title = "Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Post</h2>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @Model.Post.PostedOn.ToString("MMM d yyyy") | Added by <b>@Model.Post.Username</b>
+            <div class="panel-heading-two">               
+                    @if (Model.PostPlus != null)
+                    {
+                        <button type="submit" class="plus btn-success" post-id="@Model.Post.Id"><b>+@Model.Post.PlusCounter</b></button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="plus btn-default" post-id="@Model.Post.Id"><b>@Model.Post.PlusCounter</b></button>
+                    }          
+                @if (Model.Post.UserId == @ViewBag.actualUserId)
+                {
+                    <a href="@Url.Action("EditPost", "Post", new { id = Model.Post.Id })">
+                        <span class="glyphicon glyphicon-edit"> </span>
+                    </a>
+                    <a href="@Url.Action("Delete", "Post", new { id = Model.Post.Id })">
+                        <span class="glyphicon glyphicon-remove" style="color:red"> </span>
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="panel-body">@Html.Raw(Model.Post.Content.Replace(Environment.NewLine, "<br/>"))</div>
+    </div>
+
+@Html.Partial("_DisplayingCommentsPartial")
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="form-group">
+        <form method="post" id="postForm" enctype="application/x-www-form-urlencoded">
+            <div>
+                <textarea class="form-control" id="Content" TextMode="multiline" Name="Content" Rows="2"></textarea>
+            </div>
+            <div>
+                <button postid="@Model.Post.Id" type="submit" id="addComment" class="btn btn-primary">Wyslij</button>
+            </div>
+        </form>
+    </div>
+}
+
+<script type="text/javascript">
+  
+    $(function() {
+        $("#addComment").click(function () {
+            $.ajax({
+                url: "/api/Comment/AddComment/",
+                type: "POST",
+                datatype: "json",
+                data: {Content: $("#Content").val(), PostId: $("#addComment").attr("postid")},
+                succes: function(data) {
+                    $('#addComment').unbind('submit').submit();
+                },
+                error: function() {
+                    console.log("ERROR");
+                }
+            });
+        });
+    });
+</script>
